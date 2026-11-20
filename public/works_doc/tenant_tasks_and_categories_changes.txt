@@ -1,0 +1,57 @@
+================================================================================
+BLUE IRIS V2 - TASK CATEGORIES & DAILY SURVEY TASKS CRUD IMPLEMENTATION
+Date: 2026-10-07
+================================================================================
+
+1. SUMMARY:
+-----------
+Implemented the complete Task & Checklist Engine in the Tenant Administration portal:
+- Task Categories CRUD: Custom task groupings (Opening Checklist, Cash Count, Sanitization, Expiry, Security) with display ordering, status toggle, and question counts.
+- Daily Survey Tasks & Questions CRUD: Full question builder with:
+  * Category assignment
+  * Target designation / role filtering (e.g. Store Manager, Stylist)
+  * Target Store assignment (Universal / All stores or specific store branch)
+  * Survey Frequency (Daily, Weekly, Monthly)
+  * Task Tagging (General, Cash, Attrition, Expiry)
+  * Response Control Types: Radio (Yes/No or Single Choice), Checkbox (Multi-select), and Text/Numeric Input
+  * Dynamic Answer Options Builder
+  * Daily Shift Slot Timings (Morning Opening, Afternoon Shift, Evening Closing)
+  * Mandatory & "Allow Other" toggles.
+
+2. FILES CREATED & UPDATED:
+--------------------------
+A. Models:
+   - app/Models/Tenant/TaskCategory.php (Category model with questions relation)
+   - app/Models/Tenant/SurveyQuestion.php (Survey question model with relations to Category, Salon, Designation, Period, Options, Slots)
+   - app/Models/Tenant/SurveyPeriod.php (Daily, Weekly, Monthly periods)
+   - app/Models/Tenant/SurveySlotTime.php (Shift slot times)
+   - app/Models/Tenant/SurveyQuesOption.php (Custom answer options)
+   - app/Models/Tenant/SurveyQuesSlotTiming.php (Slot timing associations)
+
+B. Form Requests:
+   - app/Http/Requests/Tenant/StoreTaskRequest.php
+   - app/Http/Requests/Tenant/UpdateTaskRequest.php
+
+C. Controllers:
+   - app/Http/Controllers/Tenant/TaskCategoryController.php
+   - app/Http/Controllers/Tenant/SurveyQuestionController.php
+
+D. Views:
+   - resources/views/tenant/task_categories/index.blade.php
+   - resources/views/tenant/task_categories/create.blade.php
+   - resources/views/tenant/task_categories/edit.blade.php
+   - resources/views/tenant/tasks/index.blade.php
+   - resources/views/tenant/tasks/create.blade.php
+   - resources/views/tenant/tasks/edit.blade.php
+   - resources/views/tenant/tasks/show.blade.php
+   - resources/views/layouts/tenant.blade.php (Connected sidebar navigation links)
+
+E. Routes:
+   - routes/tenant.php (Registered task-categories & tasks resource routes)
+
+3. ACCESS URLS:
+---------------
+- Task Categories: http://quasar.localhost:8000/task-categories
+- Daily Tasks & Survey Questions: http://quasar.localhost:8000/tasks
+- Create Task: http://quasar.localhost:8000/tasks/create
+================================================================================

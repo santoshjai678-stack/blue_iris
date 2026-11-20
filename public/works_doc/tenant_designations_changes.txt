@@ -1,0 +1,36 @@
+================================================================================
+BLUE IRIS V2 - STAFF DESIGNATIONS & ROLES CRUD IMPLEMENTATION
+Date: 2026-10-07
+================================================================================
+
+1. SUMMARY:
+-----------
+Implemented the Staff Designations & Roles Management CRUD in the Tenant Administration portal:
+- Designations List with search, status filter (Active / Inactive), staff count badge, and assigned task count badge.
+- Add Designation form with role validation.
+- Edit & Update Designation with unique constraint checks.
+- Delete Designation with safety checks (prevents accidental deletion if survey tasks or employees are assigned).
+- Seeded standard salon designations (Store Manager, Assistant Store Manager, Senior Hair Stylist, Hair Colorist, Esthetician & Skin Specialist, Receptionist / Front Desk, Inventory Specialist).
+
+2. FILES CREATED & UPDATED:
+--------------------------
+A. Models:
+   - app/Models/Tenant/Designation.php (Updated with employees() and questions() relationships)
+
+B. Controllers:
+   - app/Http/Controllers/Tenant/DesignationController.php (Full CRUD actions with metrics aggregation)
+
+C. Views:
+   - resources/views/tenant/designations/index.blade.php (Data table with search, badges, and action buttons)
+   - resources/views/tenant/designations/create.blade.php (Create form)
+   - resources/views/tenant/designations/edit.blade.php (Edit form)
+   - resources/views/layouts/tenant.blade.php (Connected sidebar navigation link)
+
+D. Routes:
+   - routes/tenant.php (Registered Route::resource('designations', DesignationController::class))
+
+3. ACCESS URLS:
+---------------
+- Designations List: http://quasar.localhost:8000/designations
+- Add Designation: http://quasar.localhost:8000/designations/create
+================================================================================

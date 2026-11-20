@@ -1,0 +1,100 @@
+================================================================================
+BLUE IRIS V2 - RESTFUL MOBILE & TABLET APIS (V1) DOCUMENTATION & LOG
+Date: 2026-10-08
+Author: Antigravity Agentic Engineer
+Framework: Laravel 11 / Stancl Tenancy v3 / Laravel Sanctum v4.3
+================================================================================
+
+1. OVERVIEW
+--------------------------------------------------------------------------------
+Built a comprehensive RESTful API suite under `/api/v1/` scoped to the tenant
+multi-database context. All endpoints support Laravel Sanctum Bearer Token
+authentication, standardized JSON envelopes, and legacy route aliases for
+backwards compatibility with existing mobile apps.
+
+2. API ENDPOINTS REFERENCE
+--------------------------------------------------------------------------------
+
+A. AUTHENTICATION & SESSIONS (/api/v1/auth)
+   1. POST /api/v1/auth/login (or POST /api/v1/login)
+      - Payload: { "login": "email or phone", "password": "password", "device_name": "Mobile" }
+      - Returns: Bearer Sanctum Token + User Details + Permissions + Tenant Info.
+
+   2. POST /api/v1/auth/generate_otp (or POST /api/v1/generate_otp)
+      - Payload: { "phone_no": "9876543210" }
+      - Returns: Confirmation + 10-minute expiry + Dev OTP (in debug mode).
+
+   3. POST /api/v1/auth/verify_otp (or POST /api/v1/verify_otp)
+      - Payload: { "phone_no": "9876543210", "otp": "123456" }
+      - Returns: Bearer Token + User object.
+
+   4. GET /api/v1/auth/me (Protected: Requires Bearer Token)
+      - Returns: Authenticated user profile, assigned store, and Spatie roles/permissions.
+
+   5. POST /api/v1/auth/logout (or POST /api/v1/logout) (Protected)
+      - Revokes active access token.
+
+B. STORES & OPERATING HOURS (/api/v1/stores)
+   1. GET /api/v1/stores (or POST /api/v1/stores_list) (Protected)
+      - Returns list of active stores with addresses, phone/email, latitude,
+        longitude for geofencing, and 7-day operating hours.
+
+   2. GET /api/v1/stores/{id} (Protected)
+      - Returns detailed single store profile and schedule.
+
+C. TASK CATEGORIES (/api/v1/categories)
+   1. GET /api/v1/categories (Protected)
+      - Returns active survey task categories sorted by display order.
+
+D. SURVEY TASKS & DAILY CHECKLIST (/api/v1/tasks)
+   1. GET /api/v1/tasks/daily (or POST /api/v1/daily_task_list) (Protected)
+      - Query params: store_id, date (YYYY-MM-DD)
+      - Returns shift slots (Morning, Afternoon, Evening) with `is_active_now` boolean,
+        categorized checklist questions, control types, options, and answered/pending status.
+
+   2. GET /api/v1/tasks/weekly (or POST /api/v1/weekly_task_list) (Protected)
+      - Returns weekly checklist tasks and current week submission status.
+
+   3. GET /api/v1/tasks/monthly (or POST /api/v1/monthly_task_list) (Protected)
+      - Returns monthly checklist tasks and current month submission status.
+
+   4. POST/PATCH /api/v1/tasks/submit (or /api/v1/submit_answers) (Protected)
+      - Supports single answer or batch answers array.
+      - Payload: {
+          "store_id": 1,
+          "date": "2026-10-08",
+          "answers": [
+             {
+               "question_id": 1,
+               "period_id": 1,
+               "slot_id": 1,
+               "ans_text": "Yes",
+               "location": "19.0760,72.8777"
+             }
+          ]
+        }
+      - Returns: Number of recorded answers + unique batch submission ID.
+
+   5. GET /api/v1/tasks/history (Protected)
+      - Query params: store_id, start_date, end_date
+      - Returns paginated history audit of previous checklist submissions.
+
+E. PUSH NOTIFICATIONS (/api/v1/notifications)
+   1. POST /api/v1/notifications/subscribe (or /api/v1/notification_subscription_request) (Protected)
+      - Registers OneSignal / FCM player_id / device token for push reminders.
+
+3. ARCHITECTURE & CONTROLLERS CREATED
+--------------------------------------------------------------------------------
+- App\Http\Controllers\Api\V1\BaseApiController.php
+- App\Http\Controllers\Api\V1\AuthController.php
+- App\Http\Controllers\Api\V1\StoreController.php
+- App\Http\Controllers\Api\V1\CategoryController.php
+- App\Http\Controllers\Api\V1\TaskController.php
+- App\Http\Controllers\Api\V1\NotificationController.php
+- App\Models\User.php (Added Laravel\Sanctum\HasApiTokens)
+- routes/tenant.php (Registered full RESTful API route group)
+
+4. AUTOMATED TEST SUITE VERIFICATION
+--------------------------------------------------------------------------------
+All 10 API endpoints tested and passed with HTTP 200 responses.
+================================================================================

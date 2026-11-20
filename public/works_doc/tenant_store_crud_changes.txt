@@ -1,0 +1,23 @@
+================================================================================
+BLUE IRIS V2 - STORE / SALON MANAGEMENT CRUD & GEOCODING FEATURE
+Date: 2026-10-07
+================================================================================
+
+1. SUMMARY:
+-----------
+Enhanced Store (Salon) Management with automated Geocoding ("Get Latitude/Longitude"):
+- Users can input Address Line 1, City, State, Country, and Zipcode.
+- Clicking the "🎯 Get Latitude/Longitude" button calculates and auto-fills exact GPS coordinates (Latitude & Longitude) up to 6 decimal places.
+- Built-in multi-tier lookup (Exact Address -> City/State/Country fallback) with instant validation feedback.
+
+2. FILES UPDATED:
+-----------------
+- resources/views/tenant/salons/create.blade.php (Added Get Latitude/Longitude button, loading spinner, and geocoding JS)
+- resources/views/tenant/salons/edit.blade.php (Added Get Latitude/Longitude button, loading spinner, and geocoding JS)
+
+3. TESTING & USAGE:
+-------------------
+- URL: http://quasar.localhost:8000/salons/create
+- URL: http://quasar.localhost:8000/salons/{id}/edit
+- Enter address -> Click "Get Latitude/Longitude" -> Lat & Long fields automatically fill.
+================================================================================

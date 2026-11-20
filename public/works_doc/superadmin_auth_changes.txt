@@ -1,0 +1,105 @@
+================================================================================
+BLUE IRIS V2 - SUPERADMIN AUTHENTICATION CHANGE LIST & DOCUMENTATION
+Date: 05-10-2026
+================================================================================
+
+1. OVERVIEW & PURPOSE
+--------------------------------------------------------------------------------
+Implemented a dedicated, secure Central SuperAdmin Authentication and Session
+Protection system. All central management URLs (Dashboard, Tenant CRUD) are now
+strictly guarded by the `superadmin` guard and session middleware. Unauthenticated
+requests are automatically redirected to the SuperAdmin login portal.
+
+
+2. LIST OF FILES CREATED / MODIFIED
+--------------------------------------------------------------------------------
+
+A. DATABASE & MIGRATIONS
+-------------------------
+[CREATED] database/migrations/2026_10_05_000003_create_super_admins_table.php
+- Creates `super_admins` table in the central database (`blue_iris_central`).
+- Columns: id, name, email (unique), phone_no, password (hashed), status (1=Active, 0=Inactive), remember_token, timestamps.
+
+[CREATED] database/seeders/SuperAdminSeeder.php
+- Seeds default SuperAdmin accounts in central DB:
+  1. Email: superadmin@demo.com | Password: Test@123 | Status: Active
+  2. Email: superadmin@blueiris.app | Password: Password@123 | Status: Active
+
+
+B. MODELS
+---------
+[CREATED] app/Models/Central/SuperAdmin.php
+- Central SuperAdmin Eloquent model extending `Illuminate\Foundation\Auth\User`.
+- Bound to central connection (`mysql`) and `super_admins` table.
+- Implements password hashing casts and mass assignable fields.
+
+
+C. CONFIGURATION
+----------------
+[MODIFIED] config/auth.php
+- Added `superadmin` authentication guard:
+    'guards' => [
+        'web' => ['driver' => 'session', 'provider' => 'users'],
+        'superadmin' => ['driver' => 'session', 'provider' => 'superadmins'],
+    ]
+- Added `superadmins` user provider:
+    'providers' => [
+        'users' => ['driver' => 'eloquent', 'model' => App\Models\User::class],
+        'superadmins' => ['driver' => 'eloquent', 'model' => App\Models\Central\SuperAdmin::class],
+    ]
+- Added `superadmins` password broker configuration.
+
+
+D. CONTROLLERS & LOGIC
+----------------------
+[CREATED] app/Http/Controllers/Superadmin/Auth/LoginController.php
+- `showLoginForm()`: Renders superadmin login view or redirects to dashboard if already authenticated.
+- `login(Request $request)`: Validates input, authenticates via `Auth::guard('superadmin')->attempt()`, checks active status (`status = 1`), regenerates session.
+- `logout(Request $request)`: Logs out `superadmin` guard, invalidates session, regenerates CSRF token, redirects to `/superadmin/login`.
+
+
+E. ROUTING & MIDDLEWARE
+-----------------------
+[MODIFIED] routes/web.php
+- Root route `/`: Redirects to `/superadmin/dashboard` if logged in, otherwise `/superadmin/login`.
+- Guest routes:
+    - GET  /superadmin/login  -> LoginController@showLoginForm (Name: superadmin.login)
+    - POST /superadmin/login  -> LoginController@login (Name: superadmin.login.post)
+- Protected routes (Middleware: `auth:superadmin`):
+    - POST /superadmin/logout -> LoginController@logout (Name: superadmin.logout)
+    - GET  /superadmin/dashboard -> DashboardController@index (Name: superadmin.dashboard)
+    - Resource /superadmin/tenants -> TenantController (Name: superadmin.tenants.*)
+
+[MODIFIED] bootstrap/app.php
+- Configured `$middleware->redirectGuestsTo(fn () => route('superadmin.login'));` to ensure unauthenticated users are automatically sent to the superadmin login page.
+
+
+F. VIEWS (UI / UX)
+------------------
+[CREATED] resources/views/superadmin/auth/login.blade.php
+- Modern responsive login screen with Tailwind CSS.
+- Features: Email & password fields, Remember Me checkbox, flash success/error messages, demo credential hints.
+
+[MODIFIED] resources/views/layouts/superadmin.blade.php
+- Updated top navigation bar to display authenticated SuperAdmin Name and Email.
+- Added working Logout button submitting POST request to `route('superadmin.logout')`.
+
+
+3. DEFAULT CREDENTIALS FOR TESTING
+--------------------------------------------------------------------------------
+Login URL : http://127.0.0.1:8000/superadmin/login
+Email     : superadmin@demo.com
+Password  : Test@123
+
+Secondary : superadmin@blueiris.app / Password@123
+
+
+4. VERIFICATION PERFORMED
+--------------------------------------------------------------------------------
+1. Accessing `/superadmin/dashboard` without session -> Successfully redirects to `/superadmin/login`.
+2. Accessing `/superadmin/tenants` without session -> Successfully redirects to `/superadmin/login`.
+3. Submitting invalid credentials -> Displays validation error message.
+4. Submitting valid credentials (`superadmin@demo.com` / `Test@123`) -> Successfully logs in, regenerates session, redirects to `/superadmin/dashboard`.
+5. Authenticated access to Tenant CRUD -> Fully operational.
+6. Clicking Logout button -> Successfully clears session and returns to login screen.
+================================================================================

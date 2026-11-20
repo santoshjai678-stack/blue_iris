@@ -1,0 +1,34 @@
+================================================================================
+BLUE IRIS V2 - TENANT DOMAIN ROUTING & SESSION RESOLUTION CHANGES
+Date: 2026-10-05
+================================================================================
+
+1. ISSUE IDENTIFIED:
+--------------------
+- User attempted to access tenant using path-based folder structure:
+  http://quasar.localhost/blue_iris_latest_laravel/blue_iris_v2/
+- In stancl/tenancy v3 with domain/subdomain tenancy:
+  a) Tenants are routed by Host Domain (e.g. quasar.localhost), not folder paths.
+  b) With 'php artisan serve' running on port 8000, the web root is already the 'public/' directory.
+  c) When requests hit tenant domains with SESSION_DRIVER=database, the session handler queries the tenant database for the 'sessions' table.
+
+2. CHANGES IMPLEMENTED:
+-----------------------
+A. Tenant Session Table Migration:
+   - Created: database/migrations/tenant/2026_10_05_000000_create_tenant_sessions_table.php
+   - Migrated all active tenant databases via 'php artisan tenants:migrate'.
+
+B. Central Route Domain Isolation:
+   - Updated routes/web.php to constrain central routes (SuperAdmin login, dashboard, tenant CRUD) to central domains (localhost, 127.0.0.1).
+   - This ensures tenant subdomains (quasar.localhost:8000) are handled by routes/tenant.php without route collisions.
+
+3. ACCESS URLS:
+---------------
+A. Central SuperAdmin Portal:
+   - URL: http://localhost:8000/superadmin/login
+   - Credentials: superadmin@demo.com / Test@123
+
+B. Tenant Quasar India Portal:
+   - URL: http://quasar.localhost:8000/
+   - Resolves tenant 'quasar_india' and connects to database 'tenantquasar_india'.
+================================================================================

@@ -1,0 +1,19 @@
+================================================================================
+TENANT EMPLOYEE & STAFF DIRECTORY MODULE - REVISED
+================================================================================
+Date: 2026-10-08
+Author: Antigravity AI
+
+1. CLEANUP & REMOVAL OF ROLES / DESIGNATIONS IN EMPLOYEES:
+   - Completely removed Roles and Designations from the Employee module.
+   - Salon Employees are now cleanly dedicated to:
+     * Personal details (First Name, Last Name, Email, Phone, DOB).
+     * Employment status (Active, Inactive, Terminated).
+     * Store Location Assignment (Store / Salon, Shift Start/End Timings).
+     * Residential Address (Street, City, State, Zipcode).
+     * Employment History & Hire Records (Hire date, Termination date & reason).
+
+2. SYSTEM PORTAL USERS & ROLES SEPARATION:
+   - System portal access is strictly managed via `/system-users` and `/roles`.
+   - Spatie Roles & Permissions apply to System Users who log in to the web panel.
+================================================================================

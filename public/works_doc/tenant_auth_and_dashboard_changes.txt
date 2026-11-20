@@ -1,0 +1,16 @@
+================================================================================
+BLUE IRIS V2 - TENANT ADMIN AUTHENTICATION & DASHBOARD CHANGES
+Date: 2026-10-06
+================================================================================
+
+1. SUMMARY:
+-----------
+Implemented the tenant administration authentication portal and overview dashboard for multi-tenant subdomains (e.g., http://quasar.localhost:8000).
+
+2. CREDENTIALS & ACCESS URLS:
+-----------------------------
+- Tenant Login URL: http://quasar.localhost:8000/login
+- Admin Email: santosh.jaiswal@quasardigital.com
+- Admin Password: UtaxWRijwg
+- Fallback Test Password: Test@123
+================================================================================

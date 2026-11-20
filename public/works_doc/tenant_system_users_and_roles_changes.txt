@@ -1,0 +1,31 @@
+================================================================================
+TENANT SYSTEM USERS & ROLES / PERMISSIONS MODULE - IMPLEMENTATION
+================================================================================
+Date: 2026-10-08
+Author: Antigravity AI
+
+1. ARCHITECTURAL SEPARATION:
+   - Salon Employees (employees table):
+     * Salon operation staff (hair stylists, cashiers, technicians).
+     * Has salon store assignment, shift timings, and optional operational designation.
+     * Removed mandatory role requirement.
+   - System Portal Users (users + spatie roles/permissions):
+     * Web Tenant Portal administrators and managers who log into the portal.
+     * Have Spatie Roles (admin, store_manager, supervisor, auditor, custom).
+     * Have granular module permissions across:
+       Salons, Employees, Designations, Tasks, Task Categories, Attendance, PTO, Reports,
+       System Users, and Roles & Permissions.
+
+2. CONTROLLERS & REQUESTS:
+   - SystemUserController: CRUD for tenant portal administrators, password hashing, role assignment.
+   - RoleController: Modular permission matrix configuration, role CRUD, core role protection.
+   - Form Requests: StoreSystemUserRequest, UpdateSystemUserRequest, StoreRoleRequest, UpdateRoleRequest.
+
+3. VIEWS:
+   - resources/views/tenant/system_users/ (index, create, edit, show)
+   - resources/views/tenant/roles/ (index, create, edit, show)
+
+4. ROUTES & NAVIGATION:
+   - Added tenant.system-users.* and tenant.roles.* routes.
+   - Added "Access & Security" section to tenant portal sidebar navigation.
+================================================================================
